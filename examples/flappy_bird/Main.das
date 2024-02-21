@@ -54,8 +54,7 @@ class Main
 		var new_pipes : Node2D?
 		load("res://pipes.tscn") <| $ (var pipe_scene : Resource?#)
 			new_pipes = pipe_scene as PackedScene |> instantiate() as Node2D
-		let initial_pos = Vector2(window_width + pipe_width * .5, randf_range(-pipe_height, pipe_height))
-		new_pipes |> set_position(initial_pos)
+		new_pipes |> set_position(Vector2(window_width + pipe_width * .5, randf_range(-pipe_height, pipe_height)))
 		bird |> get_signal(Bird`collided) |> connect(new_pipes) <| "stop"
 		pipes |> add_child(new_pipes)
 

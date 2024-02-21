@@ -21,8 +21,7 @@ class Pipes
 
 		let prev_pos = native |> get_position()
 
-		let translation = velocity * dt
-		native |> translate(translation)
+		native |> translate(velocity * dt)
 
 		let pos = native |> get_position()
 		if prev_pos.x > game->get_bird_level() && pos.x < game->get_bird_level()

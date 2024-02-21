@@ -79,8 +79,7 @@ class Foo
 	def _process(dt: float)
 		native |> rotate(dt * angular_speed)
 		velocity += get_acc() * dt
-		let translation = dt * velocity
-		native |> translate(translation)
+		native |> translate(dt * velocity)
 
 	def on_timeout()
 		print("recieved signal from timer!")

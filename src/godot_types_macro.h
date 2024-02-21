@@ -5,6 +5,13 @@
 
 #define MAKE_NATIVE_TYPE_FACTORY(TYPE) MAKE_TYPE_FACTORY(TYPE, TYPE)
 
+#define BIND_NATIVE_VALUE_TYPE(TYPE)\
+struct TYPE##Annotation : das::ManagedValueAnnotation<TYPE> {\
+    TYPE##Annotation(das::ModuleLibrary & ml) : ManagedValueAnnotation(ml, #TYPE, #TYPE) { }\
+    bool hasNonTrivialCtor() const override { return false; }\
+};\
+addAnnotation(das::make_smart<TYPE##Annotation>(lib));\
+
 #define BIND_NATIVE_BASE(TYPE)\
 struct TYPE##Annotation : das::ManagedStructureAnnotation<TYPE, false, false> {\
     TYPE##Annotation(das::ModuleLibrary & ml) : ManagedStructureAnnotation(#TYPE, ml) { }\

@@ -77,9 +77,6 @@ struct godot_to_das<Ref<T>> {
         return t.ptr();
     }
 };
-template <typename T> struct godot_to_das<const Ref<T>&> : godot_to_das<Ref<T>> { };
-
-// TODO for all value types, turn `const T&` into `T`
 
 #include "core/string/ustring.h"
 
@@ -91,8 +88,6 @@ struct godot_to_das<String> {
     }
 };
 
-template<> struct godot_to_das<const String&> : godot_to_das<String> {};
-
 #include "core/string/string_name.h"
 
 // tmp solution, there's probably a good reason to bind StringName
@@ -102,7 +97,15 @@ template<> struct godot_to_das<StringName> {
         return ctx->stringHeap->allocateString(t.operator String().utf8().get_data());
     }
 };
+
+// Value types - removal of const and &
+// TODO: I personally don't see a reason why it's forbidden to pass temp objects to const&
+
+template <typename T> struct godot_to_das<const Ref<T>&> : godot_to_das<Ref<T>> { };
+template<> struct godot_to_das<const String&> : godot_to_das<String> {};
 template<> struct godot_to_das<const StringName&> : godot_to_das<StringName> {};
+template<> struct godot_to_das<const Vector2&> : godot_to_das<Vector2> {};
+template<> struct godot_to_das<const Color&> : godot_to_das<Color> {};
 
 // =============================================
 

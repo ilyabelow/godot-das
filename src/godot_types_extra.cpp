@@ -3,7 +3,8 @@
 
 
 void Module_Godot::bind_types_extra(das::ModuleLibrary & lib) {
-    BIND_ENUM(ResourceLoader, CacheMode)
+	BIND_NATIVE_VALUE_TYPE(Color)
 
-    BIND_NATIVE_BASE(Color)
+	BIND_ENUM(ResourceLoader, CacheMode)
+
 }
