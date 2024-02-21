@@ -14,8 +14,7 @@ class Foo
 
 	test : Signal
 
-	def finalize()
-		print("i'm dead!")
+	texture : Texture2D?
 
 	def check_entered_child(node : Node2D?)
 		// Okay, I found a problem here
@@ -44,6 +43,9 @@ class Foo
 				native |> queue_free()
 			if mouse_event |> get_button_index() == MouseButton MOUSE_BUTTON_MIDDLE
 				print("parent is ready? {native |> get_parent() as Node |> is_node_ready()}")
+				print("before {texture} (should not be null. if null, the next line will not print)")
+				native |> unload() <| texture
+				print("after {texture} (chould be null)")
 
 	def _ready()
 		print("Internal name of `test` signal is {test.name}")
@@ -68,6 +70,8 @@ class Foo
 		radius = length(to_center)
 		let to_center_dir = to_center / radius
 		velocity = speed * Vector2(to_center_dir.y, -to_center_dir.x)
+
+		texture = native |> load("res://icon.svg") as Texture2D
 
 
 	def get_acc(): Vector2

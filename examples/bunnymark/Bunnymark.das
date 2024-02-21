@@ -28,14 +28,11 @@ class Bunnymark
 
 	bunny_texture : Texture2D?
 
-	def finalize()
-		bunny_texture |> unload()
-
 	def _ready()
 		bunnies = native |> find_child("Bunnies") as Node2D
 		fps_counter = native |> find_child("FPS") as Label
 
-		bunny_texture = load("res://bunny.png") as Texture2D
+		bunny_texture = native |> load("res://bunny.png") as Texture2D
 		top_left = bunny_texture |> get_size() * 0.5
 		let size = native |> get_window() |> get_size()
 

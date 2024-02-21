@@ -17,13 +17,9 @@ template <> struct das::WrapType<Color> { enum { value = true }; typedef das::fl
 template <> struct das::WrapArgType<Color> { struct type : Color {type ( das::float4 t ) : Color(t.x, t.y, t.z, t.w) {}} ; };
 template <> struct das::WrapRetType<Color> { struct type : das::float4 {type ( Color t ) : das::float4(t.r, t.g, t.b, t.a) {}} ; };
 
-#include "core/core_bind.h"
+// #include "core/core_bind.h"
 
-DAS_BIND_ENUM_CAST(core_bind::ResourceLoader::CacheMode)
-DAS_BASE_BIND_ENUM_SAFE(core_bind::ResourceLoader::CacheMode, ResourceLoader`CacheMode, ResourceLoader_CacheMode, CACHE_MODE_IGNORE, CACHE_MODE_REUSE, CACHE_MODE_REPLACE)
-
-#include "core/variant/variant_utility.h"
-#include "core/config/engine.h"
-
+// DAS_BIND_ENUM_CAST(core_bind::ResourceLoader::CacheMode)
+// DAS_BASE_BIND_ENUM_SAFE(core_bind::ResourceLoader::CacheMode, ResourceLoader`CacheMode, ResourceLoader_CacheMode, CACHE_MODE_IGNORE, CACHE_MODE_REUSE, CACHE_MODE_REPLACE)
 
 #endif // GODOT_TYPES_EXTRA_H

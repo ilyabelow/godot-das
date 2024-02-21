@@ -23,6 +23,19 @@ char* DasScriptInstance::get_class_ptr() {
 	return class_ptr;
 }
 
+void DasScriptInstance::bind_ref(const Ref<Resource> &p_ref) {
+	bound_refs.push_back(p_ref);
+}
+
+void DasScriptInstance::unload_ref(const Resource *p_ref) {
+	for (int i = 0; i < bound_refs.size(); i++) {
+		if (bound_refs[i].ptr() == p_ref) {
+			bound_refs.remove_at(i);
+			return;
+		}
+	}
+}
+
 void DasScriptInstance::get_method_list(List<MethodInfo> *p_list) const {
 	script.ptr()->get_script_method_list(p_list);
 }

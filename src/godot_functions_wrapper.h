@@ -73,6 +73,9 @@ template <typename T>
 struct godot_to_das<Ref<T>> {
     typedef T* type;
     RET_T ret(Ref<T> t, das::Context *) {
+        DAS_FATAL_ERROR("Looks like you've binded a function that returns Ref<T>."
+                        "I guess this is the time to properly implement it"
+                        "(I don't know any cases except for `load` so I have no idea what general solution should look like)");
         t->reference(); // should be unreferenced in `unload`
         return t.ptr();
     }

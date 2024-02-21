@@ -111,25 +111,38 @@ void emit_signal(Object* owner, const char* signal_name, CTX_AT) {
 }
 
 // Loading
+// TODO: full variants which accept both type hint and CacheMode
 
-void load_simple(const char* path, const das::TBlock<void, das::TTemporary<Resource*>>& blk, CTX_AT) {
+void load_temp(const char* path, const das::TBlock<void, das::TTemporary<Resource*>>& blk, CTX_AT) {
     Ref<Resource> resource = ResourceLoader::load(path);
     vec4f args = {das::cast<void*>::from(resource.ptr())};
     ctx->invoke(blk, &args, nullptr, at);
 }
 
-void load_full(const char* path, const char *p_type_hint, core_bind::ResourceLoader::CacheMode p_cache_mode, const das::TBlock<void, das::TTemporary<Resource*>>& blk, CTX_AT) {
-    // why on earth are there two identical enums??? core_bind::ResourceLoader::CacheMode and ResourceFormatLoader::CacheMode
-    Ref<Resource> resource = ResourceLoader::load(path, p_type_hint, static_cast<ResourceFormatLoader::CacheMode>(p_cache_mode));
-    vec4f args = {das::cast<void*>::from(resource.ptr())};
-    ctx->invoke(blk, &args, nullptr, at);
+Resource* load_bind(Object* owner, const char* path, CTX_AT) {
+    CHECK_IF_NULL_MSG(owner, "cannot load resource into null object");
+    auto instance = dynamic_cast<DasScriptInstance*>(owner->get_script_instance());
+    CHECK_IF_NULL_MSG(instance, "cannot load resource into object without DasScriptInstance");
+    Ref<Resource> resource = ResourceLoader::load(path);
+    instance->bind_ref(resource);
+    return resource.ptr();
 }
 
-void unload(RefCounted* reference) {
-    // Basically a copy of `Ref::unref`
-    if (reference && reference->unreference()) {
-        memdelete(reference);
-    }
+// void load_full(const char* path, const char *p_type_hint, core_bind::ResourceLoader::CacheMode p_cache_mode, const das::TBlock<void, das::TTemporary<Resource*>>& blk, CTX_AT) {
+//     // why on earth are there two identical enums??? core_bind::ResourceLoader::CacheMode and ResourceFormatLoader::CacheMode
+//     Ref<Resource> resource = ResourceLoader::load(path, p_type_hint, static_cast<ResourceFormatLoader::CacheMode>(p_cache_mode));
+//     vec4f args = {das::cast<void*>::from(resource.ptr())};
+//     ctx->invoke(blk, &args, nullptr, at);
+// }
+
+// This function should be used if user wants to release the resource early (probably never in practice)
+void unload(Object* owner, Resource*& reference, CTX_AT) {
+    CHECK_IF_NULL_VOID_MSG(owner, "cannot unload resource from null object");
+    CHECK_IF_NULL_VOID_MSG(reference, "cannot unload null resource");
+    auto instance = dynamic_cast<DasScriptInstance*>(owner->get_script_instance());
+    CHECK_IF_NULL_VOID_MSG(instance, "cannot unload resource from object without DasScriptInstance");
+    instance->unload_ref(reference);
+    reference = nullptr;
 }
 
 // =========================================
@@ -146,12 +159,14 @@ void Module_Godot::bind_utils(das::ModuleLibrary & lib) {
     das::addExtern<DAS_BIND_FUN(emit_signal)>(*this, lib, "emit_signal", das::SideEffects::modifyArgument, "emit_signal")
     ->args({"owner", "signal_name", "__ctx__", "__at__"});
 
-    das::addExtern<DAS_BIND_FUN(load_simple)>(*this, lib, "load", das::SideEffects::modifyExternal, "load_simple")
+    das::addExtern<DAS_BIND_FUN(load_temp)>(*this, lib, "load", das::SideEffects::modifyExternal, "load_temp")
     ->args({"path", "blk", "__ctx__", "__at__"});
-    das::addExtern<DAS_BIND_FUN(load_full)>(*this, lib, "load", das::SideEffects::modifyExternal, "load_full")
-    ->args({"path", "type_hint", "cache_mode", "blk", "__ctx__", "__at__"});
+    das::addExtern<DAS_BIND_FUN(load_bind)>(*this, lib, "load", das::SideEffects::modifyExternal, "load_bind")
+    ->args({"owner", "path", "__ctx__", "__at__"});
+    // das::addExtern<DAS_BIND_FUN(load_full)>(*this, lib, "load", das::SideEffects::modifyExternal, "load_full")
+    // ->args({"path", "type_hint", "cache_mode", "blk", "__ctx__", "__at__"});
     das::addExtern<DAS_BIND_FUN(unload)>(*this, lib, "unload", das::SideEffects::modifyArgument, "unload")
-    ->args({"reference"});
+    ->args({"owner", "reference", "__ctx__", "__at__"});
 }
 
 REGISTER_MODULE(Module_Godot);

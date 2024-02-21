@@ -8,18 +8,14 @@
 #include "das_script_instance.h"
 #include "core/core_bind.h"
 
+#include "core/variant/variant_utility.h"
+#include "core/config/engine.h"
+
 // Here are functions that are
 // 1) not generated yet, but will be
 // 2) not in a large enough group to put in a separate file
 
-using CoreResourceLoader = core_bind::ResourceLoader;
-
-
 void Module_Godot::bind_functions_extra(das::ModuleLibrary & lib) {
-	BIND_GODOT_SINGLETON_MEMBER_BUILTIN(CoreResourceLoader, load, "path", "type_hint", "no_cache")
-    SET_DEFAULT_ARG(CoreResourceLoader, load, 1, "")
-    SET_DEFAULT_ARG(CoreResourceLoader, load, 2, 1)
-
 	// Color
     // not in a macro because Color::named has overloads
     using _Color_named = DAS_CALL_GODOT_STATIC_MEMBER(*static_cast<Color (*)(const String &)>(&Color::named));

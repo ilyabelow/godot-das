@@ -43,19 +43,21 @@ void DasScript::free_instance(DasScriptInstance *p_instance) {
 		DasScriptLanguage::get_singleton()->acquire_lock();
 		instances.erase(p_instance->get_owner());
 	}
-	int offset = get_field_offset("__finalize");
-	if (offset == INVALID_OFFSET) { return; }
+
 	char* class_ptr = p_instance->get_class_ptr();
 
-	auto func_ptr = reinterpret_cast<das::Func*>(class_ptr + offset)->PTR;
-	vec4f args[] = {das::cast<void*>::from(class_ptr)};
-	ctx->tryRestartAndLock();
-	ctx->evalWithCatch(func_ptr, args);
-	ctx->unlock();
-	if (const char* exception = ctx->getException()) {
-		const char* fileinfo_name = ctx->exceptionAt.fileInfo ? ctx->exceptionAt.fileInfo->name.c_str() : "(no file)";
-		_err_print_error("finalize", fileinfo_name, ctx->exceptionAt.line, exception, false, ERR_HANDLER_SCRIPT);
-	}
+	// int offset = get_field_offset("__finalize");
+	// if (offset == INVALID_OFFSET) { return; }
+
+	// auto func_ptr = reinterpret_cast<das::Func*>(class_ptr + offset)->PTR;
+	// vec4f args[] = {das::cast<void*>::from(class_ptr)};
+	// ctx->tryRestartAndLock();
+	// ctx->evalWithCatch(func_ptr, args);
+	// ctx->unlock();
+	// if (const char* exception = ctx->getException()) {
+	// 	const char* fileinfo_name = ctx->exceptionAt.fileInfo ? ctx->exceptionAt.fileInfo->name.c_str() : "(no file)";
+	// 	_err_print_error("finalize", fileinfo_name, ctx->exceptionAt.line, exception, false, ERR_HANDLER_SCRIPT);
+	// }
 	ctx->heap->free(p_instance->get_class_ptr(), main_structure->getSizeOf64());
 }
 

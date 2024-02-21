@@ -8,6 +8,7 @@ class DasScriptInstance;
 class DasScriptInstance : public ScriptInstance {
 	Object *owner = nullptr;
 	Ref<DasScript> script;
+	Vector<Ref<Resource>> bound_refs;
 
 	char* class_ptr = nullptr;
 public:
@@ -18,6 +19,8 @@ public:
 	void set_owner(Object *p_owner);
 	void set_class_ptr(char* p_class_ptr);
 	char* get_class_ptr();
+	void bind_ref(const Ref<Resource> &p_ref);
+	void unload_ref(const Resource *p_ref);
 
 	// ScriptInstance methods
 	bool set(const StringName &p_name, const Variant &p_value) override { /* TODO */ return false; }

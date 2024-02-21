@@ -69,9 +69,9 @@ class GodotClassAnnotation : AstStructureAnnotation
         ctorFn.flags |= FunctionFlags generated | FunctionFlags exports
         compiling_module() |> add_function(ctorFn)
 
-        // tmp solution? tbh this should be the default
-        for fi in st.fields
-            if fi._type.baseType == Type tPointer
-                fi.flags |= FieldDeclarationFlags doNotDelete
+        // // tmp solution? tbh this should be the default
+        // for fi in st.fields
+        //     if fi._type.baseType == Type tPointer
+        //         fi.flags |= FieldDeclarationFlags doNotDelete
 
         return true
